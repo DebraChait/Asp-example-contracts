@@ -1,0 +1,36 @@
+invariance OnlyRefundBidders {
+    
+        /* refunds are correct: non-highest bidders get refunded everything, and highest bidder gets refunded everything except their winning bid */
+        always Map.get(refunded, beneficiary) == 0 ==> Map.get(refunded, maxBidder) + Coin.value(maxBid) == Map.get(bidded, maxBidder)
+        always Map.get(refunded, beneficiary) > 0 ==> Map.get(refunded, maxBidder) + winningBid == Map.get(bidded, maxBidder)
+        always (forall b: address : (b != maxBidder && b != beneficiary) ==> Map.get(refunded, b) == Map.get(bidded, b))
+
+        /* bidded pos amount from current bidder */
+        always forall b: address : (b != Address.none && Map.in(b, bidded)) ==> Map.get(bidded, b) > 0
+        always currentBidder != Address.none ==> Map.get(bidded, currentBidder) > 0
+
+        /* only send coins to addresses we have bidded coins from */
+        always forall b: address : (b != beneficiary && Map.get(bidded, b) == 0) ==> Map.get(refunded, b) == 0
+        
+        /* misc bad address invariants */
+        always beneficiary != Address.none
+        always maxBidder != beneficiary && (currentBidder != beneficiary)
+       
+
+        @StartAuction 
+            /* start values are correct */
+            Coin.value(maxBid) == 0 && maxBidder == Address.none &&
+            currentBid == 0 && currentBidder == Address.none &&
+            balance == 0 &&
+            /* for invariants above */
+            Map.get(refunded, beneficiary) == 0           
+
+        @AuctionOpen 
+            /* for invariants above */
+            Map.get(refunded, beneficiary) == 0
+
+        @AuctionClosed 
+            /* beneficiary gets highest bid */
+            Map.get(refunded, beneficiary) == winningBid
+
+}

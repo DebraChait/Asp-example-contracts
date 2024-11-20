@@ -1,0 +1,40 @@
+/* AuctionClosed is always reached */
+
+reachability auction_closed(2) {   // The number "2" indicates the length of rank tuple
+
+  goal = {
+     @AuctionClosed true
+
+     /* all other entries are false by default */
+  }
+  
+  invariant =  {
+    /* Invariants needed for the ranking proof, if any. 
+     * Same syntax as for invariance proofs
+     */
+     
+     @StartAuction   Timer.is_off(tmr)   
+     @AuctionOpen   !Timer.is_off(tmr)
+   }
+
+   rank = {
+	@StartAuction
+	   /* The order is important, as these are treated as if-then-elses.
+	    * The undefined case is implicitly that where no conditions hold
+	    */
+	    | (2 ,0) 
+
+
+	@AuctionOpen                                          
+            | (1 ,0) if Timer.has_fired (tmr) 
+            | (1 , Timer.value(tmr)) if Timer.is_active (tmr) 
+
+        @AuctionClosed
+	    | (0 ,0)
+   }
+
+  skolem = {
+       @StartAuction a==owner && a != Address.none
+       @AuctionOpen  a != beneficiary && a != Address.none && Coin.value(c) > Coin.value(maxBid)
+  }
+}

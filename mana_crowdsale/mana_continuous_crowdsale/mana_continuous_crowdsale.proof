@@ -1,0 +1,7 @@
+invariance ManaContinuousSale {
+    always sale_completed ==> bucket_amount <= bucket_issuance
+
+    @Setup !sale_completed
+    @TrackSale !sale_completed 
+ 
+}

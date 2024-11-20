@@ -1,0 +1,3 @@
+invariance ManaCrowdsale {
+    @FinalizeCrowdsale coinsRaised >= max_coins || Timer.has_fired(sale_timer)
+}

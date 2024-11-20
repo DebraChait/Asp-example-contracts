@@ -1,0 +1,251 @@
+
+  import "../ADT_encoding.vpr"
+  
+    
+    method auction_closed_startup_transition (beneficiary1: Address, bidded1: Map[Address,Int], bidding_time1: Int, maxBid1: Coin, maxBidder1: Address, refunded1: Map[Address,Int], tmr1: Timer, chain_length_inc: Int) returns (beneficiary: Address, bidded: Map[Address,Int], bidding_time: Int, maxBid: Coin, maxBidder: Address, refunded: Map[Address,Int], tmr: Timer) 
+    requires ((beneficiary1 != null_addr()) && (bidding_time1 > 0))
+    ensures ((beneficiary != null_addr()) && (bidding_time > 0))
+    ensures off(tmr)
+    {
+      beneficiary := beneficiary1
+      bidded := bidded1
+      bidding_time := bidding_time1
+      maxBid := maxBid1
+      maxBidder := maxBidder1
+      refunded := refunded1
+      tmr := tmr1
+      
+      tmr := init_timer()
+      refunded := Map()
+      maxBidder := null_addr()
+      maxBid := init_coin()
+      bidded := Map()
+      
+      assume chain_length_inc > 0
+      tmr := timer_dec(tmr, chain_length_inc)
+      
+    }
+    
+    method auction_closed_check_rank_undefinedness_at_AuctionOpen (beneficiary1: Address, bidded1: Map[Address,Int], bidding_time1: Int, maxBid1: Coin, maxBidder1: Address, refunded1: Map[Address,Int], tmr1: Timer, chain_length_inc: Int) returns (beneficiary: Address, bidded: Map[Address,Int], bidding_time: Int, maxBid: Coin, maxBidder: Address, refunded: Map[Address,Int], tmr: Timer) 
+    requires !off(tmr1)
+    requires ((beneficiary1 != null_addr()) && (bidding_time1 > 0))
+    ensures !(!fired(tmr1) && !active(tmr1))
+    {
+      beneficiary := beneficiary1
+      bidded := bidded1
+      bidding_time := bidding_time1
+      maxBid := maxBid1
+      maxBidder := maxBidder1
+      refunded := refunded1
+      tmr := tmr1
+      
+      
+      assume chain_length_inc > 0
+      tmr := timer_dec(tmr, chain_length_inc)
+      
+    }
+    
+    method auction_closed_check_enabledness_at_AuctionClosed (beneficiary1: Address, bidded1: Map[Address,Int], bidding_time1: Int, maxBid1: Coin, maxBidder1: Address, refunded1: Map[Address,Int], tmr1: Timer, chain_length_inc: Int) returns (beneficiary: Address, bidded: Map[Address,Int], bidding_time: Int, maxBid: Coin, maxBidder: Address, refunded: Map[Address,Int], tmr: Timer) 
+    requires !true
+    requires ((beneficiary1 != null_addr()) && (bidding_time1 > 0))
+    ensures false
+    {
+      beneficiary := beneficiary1
+      bidded := bidded1
+      bidding_time := bidding_time1
+      maxBid := maxBid1
+      maxBidder := maxBidder1
+      refunded := refunded1
+      tmr := tmr1
+      
+      
+      assume chain_length_inc > 0
+      tmr := timer_dec(tmr, chain_length_inc)
+      
+    }
+    
+    method auction_closed_check_enabledness_at_AuctionOpen (a1: Address, beneficiary1: Address, bidded1: Map[Address,Int], bidding_time1: Int, c1: Coin, maxBid1: Coin, maxBidder1: Address, refunded1: Map[Address,Int], tmr1: Timer, chain_length_inc: Int) returns (a: Address, beneficiary: Address, bidded: Map[Address,Int], bidding_time: Int, c: Coin, maxBid: Coin, maxBidder: Address, refunded: Map[Address,Int], tmr: Timer) 
+    requires !off(tmr1)
+    requires (((a1 != beneficiary1) && (a1 != null_addr())) && (cvalue(c1) > cvalue(maxBid1)))
+    requires ((beneficiary1 != null_addr()) && (bidding_time1 > 0))
+    ensures ((((a1 != beneficiary1) && true) && ((active(tmr1) && (cvalue(c1) > cvalue(maxBid1))) && (a1 != null_addr()))) || fired(tmr1))
+    {
+      a := a1
+      beneficiary := beneficiary1
+      bidded := bidded1
+      bidding_time := bidding_time1
+      c := c1
+      maxBid := maxBid1
+      maxBidder := maxBidder1
+      refunded := refunded1
+      tmr := tmr1
+      
+      
+      assume chain_length_inc > 0
+      tmr := timer_dec(tmr, chain_length_inc)
+      
+    }
+    
+    method auction_closed_check_enabledness_at_StartAuction (a1: Address, beneficiary1: Address, bidded1: Map[Address,Int], bidding_time1: Int, maxBid1: Coin, maxBidder1: Address, refunded1: Map[Address,Int], tmr1: Timer, chain_length_inc: Int) returns (a: Address, beneficiary: Address, bidded: Map[Address,Int], bidding_time: Int, maxBid: Coin, maxBidder: Address, refunded: Map[Address,Int], tmr: Timer) 
+    requires ((a1 == owner()) && (a1 != null_addr()))
+    requires ((beneficiary1 != null_addr()) && (bidding_time1 > 0))
+    requires off(tmr1)
+    ensures (((a1 == owner()) || false) && (a1 != null_addr()))
+    {
+      a := a1
+      beneficiary := beneficiary1
+      bidded := bidded1
+      bidding_time := bidding_time1
+      maxBid := maxBid1
+      maxBidder := maxBidder1
+      refunded := refunded1
+      tmr := tmr1
+      
+      
+      assume chain_length_inc > 0
+      tmr := timer_dec(tmr, chain_length_inc)
+      
+    }
+    
+    method auction_closed_rank_transition_number_0_from_StartAuction_to_AuctionOpen (a1: Address, beneficiary1: Address, bidded1: Map[Address,Int], bidding_time1: Int, maxBid1: Coin, maxBidder1: Address, refunded1: Map[Address,Int], tmr1: Timer, chain_length_inc: Int) returns (a: Address, beneficiary: Address, bidded: Map[Address,Int], bidding_time: Int, maxBid: Coin, maxBidder: Address, refunded: Map[Address,Int], tmr: Timer) 
+    requires ((beneficiary1 != null_addr()) && (bidding_time1 > 0))
+    requires ((a1 == owner()) || false)
+    requires (a1 != null_addr())
+    requires off(tmr1)
+    ensures (false || ((((beneficiary != null_addr()) && (bidding_time > 0)) && !off(tmr)) && ((fired(tmr) ==> ((1 < 2) || ((1 == 2) && (0 < 0)))) && ((active(tmr) && !fired(tmr)) ==> ((1 < 2) || ((1 == 2) && (time_left(tmr) < 0)))))))
+    {
+      a := a1
+      beneficiary := beneficiary1
+      bidded := bidded1
+      bidding_time := bidding_time1
+      maxBid := maxBid1
+      maxBidder := maxBidder1
+      refunded := refunded1
+      tmr := tmr1
+      
+      
+      tmr := timer_set(tmr, bidding_time)
+      assume chain_length_inc > 0
+      tmr := timer_dec(tmr, chain_length_inc)
+      
+    }
+    
+    method auction_closed_rank_transition_number_1_from_StartAuction_to_StartAuction (beneficiary1: Address, bidded1: Map[Address,Int], bidding_time1: Int, maxBid1: Coin, maxBidder1: Address, refunded1: Map[Address,Int], tmr1: Timer, chain_length_inc: Int) returns (beneficiary: Address, bidded: Map[Address,Int], bidding_time: Int, maxBid: Coin, maxBidder: Address, refunded: Map[Address,Int], tmr: Timer) 
+    requires ((beneficiary1 != null_addr()) && (bidding_time1 > 0))
+    requires active(tmr1)
+    requires off(tmr1)
+    ensures (false || ((((beneficiary != null_addr()) && (bidding_time > 0)) && off(tmr)) && (true ==> ((2 < 2) || ((2 == 2) && (0 < 0))))))
+    {
+      beneficiary := beneficiary1
+      bidded := bidded1
+      bidding_time := bidding_time1
+      maxBid := maxBid1
+      maxBidder := maxBidder1
+      refunded := refunded1
+      tmr := tmr1
+      
+      
+      assume chain_length_inc > 0
+      tmr := timer_dec(tmr, chain_length_inc)
+      
+    }
+    
+    method auction_closed_rank_transition_number_0_from_AuctionOpen_to_AuctionClosed (beneficiary1: Address, bidded1: Map[Address,Int], bidding_time1: Int, maxBid1: Coin, maxBidder1: Address, refunded1: Map[Address,Int], tmr1: Timer, chain_length_inc: Int) returns (beneficiary: Address, bidded: Map[Address,Int], bidding_time: Int, maxBid: Coin, maxBidder: Address, refunded: Map[Address,Int], tmr: Timer) 
+    requires !off(tmr1)
+    requires ((beneficiary1 != null_addr()) && (bidding_time1 > 0))
+    requires fired(tmr1)
+    ensures (true || (((beneficiary != null_addr()) && (bidding_time > 0)) && ((fired(tmr1) ==> ((0 < 1) || ((0 == 1) && (0 < 0)))) && ((active(tmr1) && !fired(tmr1)) ==> ((0 < 1) || ((0 == 1) && (0 < time_left(tmr1))))))))
+    {
+      beneficiary := beneficiary1
+      bidded := bidded1
+      bidding_time := bidding_time1
+      maxBid := maxBid1
+      maxBidder := maxBidder1
+      refunded := refunded1
+      tmr := tmr1
+      
+      
+      refunded := refunded[beneficiary := (((beneficiary in refunded) ? refunded[beneficiary] : 0) + cvalue(maxBid))]
+      // send_winner(maxBid, maxBidder, beneficiary)
+      
+      maxBid := init_coin()
+      assume chain_length_inc > 0
+      tmr := timer_dec(tmr, chain_length_inc)
+      
+    }
+    
+    method auction_closed_rank_transition_number_1_from_AuctionOpen_to_AuctionOpen (a1: Address, beneficiary1: Address, bidded1: Map[Address,Int], bidding_time1: Int, c1: Coin, maxBid1: Coin, maxBidder1: Address, refunded1: Map[Address,Int], tmr1: Timer, chain_length_inc: Int) returns (a: Address, beneficiary: Address, bidded: Map[Address,Int], bidding_time: Int, c: Coin, maxBid: Coin, maxBidder: Address, refunded: Map[Address,Int], tmr: Timer) 
+    requires !off(tmr1)
+    requires ((a1 != beneficiary1) && true)
+    requires ((beneficiary1 != null_addr()) && (bidding_time1 > 0))
+    requires (active(tmr1) && (cvalue(c1) > cvalue(maxBid1)))
+    requires (a1 != null_addr())
+    ensures (false || ((((beneficiary != null_addr()) && (bidding_time > 0)) && !off(tmr)) && (((fired(tmr) && fired(tmr1)) ==> ((1 < 1) || ((1 == 1) && (0 < 0)))) && (((active(tmr) && (!fired(tmr) && fired(tmr1))) ==> ((1 < 1) || ((1 == 1) && (time_left(tmr) < 0)))) && (((fired(tmr) && (active(tmr1) && !fired(tmr1))) ==> ((1 < 1) || ((1 == 1) && (0 < time_left(tmr1))))) && ((active(tmr) && (!fired(tmr) && (active(tmr1) && !fired(tmr1)))) ==> ((1 < 1) || ((1 == 1) && (time_left(tmr) < time_left(tmr1))))))))))
+    {
+      a := a1
+      beneficiary := beneficiary1
+      bidded := bidded1
+      bidding_time := bidding_time1
+      c := c1
+      maxBid := maxBid1
+      maxBidder := maxBidder1
+      refunded := refunded1
+      tmr := tmr1
+      
+      
+      bidded := bidded[a := (((a in bidded) ? bidded[a] : 0) + cvalue(c))]
+      refunded := refunded[maxBidder := (((maxBidder in refunded) ? refunded[maxBidder] : 0) + cvalue(maxBid))]
+      // send_bid_lost(maxBid, maxBidder)
+      
+      maxBid := init_coin()
+      maxBidder := a
+      
+      
+      c, maxBid := cmove_all(c, maxBid)
+      
+      
+      assume chain_length_inc > 0
+      tmr := timer_dec(tmr, chain_length_inc)
+      
+    }
+    
+    method auction_closed_rank_transition_number_2_from_AuctionOpen_to_AuctionOpen (beneficiary1: Address, bidded1: Map[Address,Int], bidding_time1: Int, maxBid1: Coin, maxBidder1: Address, refunded1: Map[Address,Int], tmr1: Timer, chain_length_inc: Int) returns (beneficiary: Address, bidded: Map[Address,Int], bidding_time: Int, maxBid: Coin, maxBidder: Address, refunded: Map[Address,Int], tmr: Timer) 
+    requires !off(tmr1)
+    requires ((beneficiary1 != null_addr()) && (bidding_time1 > 0))
+    requires active(tmr1)
+    ensures (false || ((((beneficiary != null_addr()) && (bidding_time > 0)) && !off(tmr)) && (((fired(tmr) && fired(tmr1)) ==> ((1 < 1) || ((1 == 1) && (0 < 0)))) && (((active(tmr) && (!fired(tmr) && fired(tmr1))) ==> ((1 < 1) || ((1 == 1) && (time_left(tmr) < 0)))) && (((fired(tmr) && (active(tmr1) && !fired(tmr1))) ==> ((1 < 1) || ((1 == 1) && (0 < time_left(tmr1))))) && ((active(tmr) && (!fired(tmr) && (active(tmr1) && !fired(tmr1)))) ==> ((1 < 1) || ((1 == 1) && (time_left(tmr) < time_left(tmr1))))))))))
+    {
+      beneficiary := beneficiary1
+      bidded := bidded1
+      bidding_time := bidding_time1
+      maxBid := maxBid1
+      maxBidder := maxBidder1
+      refunded := refunded1
+      tmr := tmr1
+      
+      
+      assume chain_length_inc > 0
+      tmr := timer_dec(tmr, chain_length_inc)
+      
+    }
+    
+    method auction_closed_rank_transition_number_0_from_AuctionClosed_to_AuctionClosed (beneficiary1: Address, bidded1: Map[Address,Int], bidding_time1: Int, maxBid1: Coin, maxBidder1: Address, refunded1: Map[Address,Int], tmr1: Timer, chain_length_inc: Int) returns (beneficiary: Address, bidded: Map[Address,Int], bidding_time: Int, maxBid: Coin, maxBidder: Address, refunded: Map[Address,Int], tmr: Timer) 
+    requires !true
+    requires ((beneficiary1 != null_addr()) && (bidding_time1 > 0))
+    requires active(tmr1)
+    ensures (true || (((beneficiary != null_addr()) && (bidding_time > 0)) && (true ==> ((0 < 0) || ((0 == 0) && (0 < 0))))))
+    {
+      beneficiary := beneficiary1
+      bidded := bidded1
+      bidding_time := bidding_time1
+      maxBid := maxBid1
+      maxBidder := maxBidder1
+      refunded := refunded1
+      tmr := tmr1
+      
+      
+      assume chain_length_inc > 0
+      tmr := timer_dec(tmr, chain_length_inc)
+      
+    }
+    

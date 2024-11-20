@@ -1,0 +1,294 @@
+
+  import "../ADT_encoding.vpr"
+  
+    
+    method Spec02_startup_transition (coinsRaised1: Int, max_coins1: Int, pref_rate1: Int, rate1: Int, sale_timer1: Timer, token_to_send1: Token, tokens_bought1: Int, wallet1: Address, whitelist1: Map[Address,Bool], whitelist_rate1: Map[Address,Int], chain_length_inc: Int) returns (coinsRaised: Int, max_coins: Int, pref_rate: Int, rate: Int, sale_timer: Timer, token_to_send: Token, tokens_bought: Int, wallet: Address, whitelist: Map[Address,Bool], whitelist_rate: Map[Address,Int]) 
+    {
+      coinsRaised := coinsRaised1
+      max_coins := max_coins1
+      pref_rate := pref_rate1
+      rate := rate1
+      sale_timer := sale_timer1
+      token_to_send := token_to_send1
+      tokens_bought := tokens_bought1
+      wallet := wallet1
+      whitelist := whitelist1
+      whitelist_rate := whitelist_rate1
+      
+      whitelist_rate := Map()
+      whitelist := Map()
+      wallet := null_addr()
+      tokens_bought := 0
+      token_to_send := init_token()
+      sale_timer := init_timer()
+      rate := 0
+      pref_rate := 0
+      max_coins := 0
+      coinsRaised := 0
+      
+      assume chain_length_inc > 0
+      sale_timer := timer_dec(sale_timer, chain_length_inc)
+      
+    }
+    
+    method Spec02_inv_transition_number_0_from_Setup_to_CrowdsaleOpen (a1: Address, coinsRaised1: Int, max_coins1: Int, pref_rate1: Int, rate1: Int, sale_timer1: Timer, time1: Int, token_to_send1: Token, tokens_bought1: Int, wallet1: Address, whitelist1: Map[Address,Bool], whitelist_rate1: Map[Address,Int], chain_length_inc: Int) returns (a: Address, coinsRaised: Int, max_coins: Int, pref_rate: Int, rate: Int, sale_timer: Timer, time: Int, token_to_send: Token, tokens_bought: Int, wallet: Address, whitelist: Map[Address,Bool], whitelist_rate: Map[Address,Int]) 
+    requires ((a1 == owner()) || false)
+    requires (a1 != null_addr())
+    {
+      a := a1
+      coinsRaised := coinsRaised1
+      max_coins := max_coins1
+      pref_rate := pref_rate1
+      rate := rate1
+      sale_timer := sale_timer1
+      time := time1
+      token_to_send := token_to_send1
+      tokens_bought := tokens_bought1
+      wallet := wallet1
+      whitelist := whitelist1
+      whitelist_rate := whitelist_rate1
+      
+      
+      sale_timer := timer_set(sale_timer, time)
+      assume chain_length_inc > 0
+      sale_timer := timer_dec(sale_timer, chain_length_inc)
+      
+    }
+    
+    method Spec02_inv_transition_number_1_from_Setup_to_Setup (a1: Address, c1: Coin, coinsRaised1: Int, max_coins1: Int, pref_rate1: Int, rate1: Int, sale_timer1: Timer, token_to_send1: Token, tokens_bought1: Int, wallet1: Address, whitelist1: Map[Address,Bool], whitelist_rate1: Map[Address,Int], chain_length_inc: Int) returns (a: Address, c: Coin, coinsRaised: Int, max_coins: Int, pref_rate: Int, rate: Int, sale_timer: Timer, token_to_send: Token, tokens_bought: Int, wallet: Address, whitelist: Map[Address,Bool], whitelist_rate: Map[Address,Int]) 
+    requires (((cvalue(c1) > 0) && (coinsRaised1 < max_coins1)) && ((a1 in whitelist1) ? whitelist1[a1] : false))
+    requires (a1 != null_addr())
+    {
+      a := a1
+      c := c1
+      coinsRaised := coinsRaised1
+      max_coins := max_coins1
+      pref_rate := pref_rate1
+      rate := rate1
+      sale_timer := sale_timer1
+      token_to_send := token_to_send1
+      tokens_bought := tokens_bought1
+      wallet := wallet1
+      whitelist := whitelist1
+      whitelist_rate := whitelist_rate1
+      
+      
+      coinsRaised := (coinsRaised + cvalue(c))
+      // send_sale_coins(c, wallet)
+      
+      c := init_coin()
+      tokens_bought := (((a in whitelist_rate) ? whitelist_rate[a] : pref_rate) * cvalue(c))
+      
+      token_to_send := tissue(tokens_bought,token_to_send)
+      
+      // send_sale_tokens(token_to_send, a)
+      
+      token_to_send := init_token()
+      assume chain_length_inc > 0
+      sale_timer := timer_dec(sale_timer, chain_length_inc)
+      
+    }
+    
+    method Spec02_inv_transition_number_2_from_Setup_to_Setup (a1: Address, b1: Address, coinsRaised1: Int, max_coins1: Int, pref_rate1: Int, r1: Int, rate1: Int, sale_timer1: Timer, token_to_send1: Token, tokens_bought1: Int, wallet1: Address, whitelist1: Map[Address,Bool], whitelist_rate1: Map[Address,Int], chain_length_inc: Int) returns (a: Address, b: Address, coinsRaised: Int, max_coins: Int, pref_rate: Int, r: Int, rate: Int, sale_timer: Timer, token_to_send: Token, tokens_bought: Int, wallet: Address, whitelist: Map[Address,Bool], whitelist_rate: Map[Address,Int]) 
+    requires ((a1 == owner()) || false)
+    requires (r1 > 0)
+    requires (a1 != null_addr())
+    {
+      a := a1
+      b := b1
+      coinsRaised := coinsRaised1
+      max_coins := max_coins1
+      pref_rate := pref_rate1
+      r := r1
+      rate := rate1
+      sale_timer := sale_timer1
+      token_to_send := token_to_send1
+      tokens_bought := tokens_bought1
+      wallet := wallet1
+      whitelist := whitelist1
+      whitelist_rate := whitelist_rate1
+      
+      
+      whitelist := whitelist[b := true]
+      whitelist_rate := whitelist_rate[b := r]
+      // send_pref_rate_change(r, b)
+      assume chain_length_inc > 0
+      sale_timer := timer_dec(sale_timer, chain_length_inc)
+      
+    }
+    
+    method Spec02_inv_transition_number_3_from_Setup_to_Setup (a1: Address, coinsRaised1: Int, max_coins1: Int, pref_rate1: Int, r1: Int, rate1: Int, sale_timer1: Timer, token_to_send1: Token, tokens_bought1: Int, wallet1: Address, whitelist1: Map[Address,Bool], whitelist_rate1: Map[Address,Int], chain_length_inc: Int) returns (a: Address, coinsRaised: Int, max_coins: Int, pref_rate: Int, r: Int, rate: Int, sale_timer: Timer, token_to_send: Token, tokens_bought: Int, wallet: Address, whitelist: Map[Address,Bool], whitelist_rate: Map[Address,Int]) 
+    requires ((a1 == owner()) || false)
+    requires (r1 > 0)
+    requires (a1 != null_addr())
+    {
+      a := a1
+      coinsRaised := coinsRaised1
+      max_coins := max_coins1
+      pref_rate := pref_rate1
+      r := r1
+      rate := rate1
+      sale_timer := sale_timer1
+      token_to_send := token_to_send1
+      tokens_bought := tokens_bought1
+      wallet := wallet1
+      whitelist := whitelist1
+      whitelist_rate := whitelist_rate1
+      
+      
+      rate := r
+      assume chain_length_inc > 0
+      sale_timer := timer_dec(sale_timer, chain_length_inc)
+      
+    }
+    
+    method Spec02_inv_transition_number_4_from_Setup_to_Setup (a1: Address, coinsRaised1: Int, max_coins1: Int, mc1: Int, pr1: Int, pref_rate1: Int, r1: Int, rate1: Int, sale_timer1: Timer, token_to_send1: Token, tokens_bought1: Int, w1: Address, wallet1: Address, whitelist1: Map[Address,Bool], whitelist_rate1: Map[Address,Int], chain_length_inc: Int) returns (a: Address, coinsRaised: Int, max_coins: Int, mc: Int, pr: Int, pref_rate: Int, r: Int, rate: Int, sale_timer: Timer, token_to_send: Token, tokens_bought: Int, w: Address, wallet: Address, whitelist: Map[Address,Bool], whitelist_rate: Map[Address,Int]) 
+    requires ((r1 > 0) && (pr1 > 0))
+    requires ((a1 == owner()) || false)
+    requires (a1 != null_addr())
+    {
+      a := a1
+      coinsRaised := coinsRaised1
+      max_coins := max_coins1
+      mc := mc1
+      pr := pr1
+      pref_rate := pref_rate1
+      r := r1
+      rate := rate1
+      sale_timer := sale_timer1
+      token_to_send := token_to_send1
+      tokens_bought := tokens_bought1
+      w := w1
+      wallet := wallet1
+      whitelist := whitelist1
+      whitelist_rate := whitelist_rate1
+      
+      
+      max_coins := mc
+      wallet := w
+      rate := r
+      pref_rate := pr
+      assume chain_length_inc > 0
+      sale_timer := timer_dec(sale_timer, chain_length_inc)
+      
+    }
+    
+    method Spec02_inv_transition_number_0_from_FinalizeCrowdsale_to_CrowdsaleClosed (a1: Address, bs1: Int, coinsRaised1: Int, continuous_sale1: Address, max_coins1: Int, pref_rate1: Int, r1: Int, rate1: Int, sale_timer1: Timer, token_to_send1: Token, tokens_bought1: Int, w1: Address, wallet1: Address, whitelist1: Map[Address,Bool], whitelist_rate1: Map[Address,Int], chain_length_inc: Int) returns (a: Address, bs: Int, coinsRaised: Int, continuous_sale: Address, max_coins: Int, pref_rate: Int, r: Int, rate: Int, sale_timer: Timer, token_to_send: Token, tokens_bought: Int, w: Address, wallet: Address, whitelist: Map[Address,Bool], whitelist_rate: Map[Address,Int]) 
+    requires ((coinsRaised1 >= max_coins1) || fired(sale_timer1))
+    requires ((a1 == owner()) || false)
+    requires (a1 != null_addr())
+    requires (continuous_sale1 != null_addr())
+    {
+      a := a1
+      bs := bs1
+      coinsRaised := coinsRaised1
+      continuous_sale := continuous_sale1
+      max_coins := max_coins1
+      pref_rate := pref_rate1
+      r := r1
+      rate := rate1
+      sale_timer := sale_timer1
+      token_to_send := token_to_send1
+      tokens_bought := tokens_bought1
+      w := w1
+      wallet := wallet1
+      whitelist := whitelist1
+      whitelist_rate := whitelist_rate1
+      
+      
+      // send_start_continuous_crowdsale(bs, w, r, continuous_sale)
+      assume chain_length_inc > 0
+      sale_timer := timer_dec(sale_timer, chain_length_inc)
+      
+    }
+    
+    method Spec02_inv_transition_number_0_from_CrowdsaleOpen_to_FinalizeCrowdsale (coinsRaised1: Int, max_coins1: Int, pref_rate1: Int, rate1: Int, sale_timer1: Timer, token_to_send1: Token, tokens_bought1: Int, wallet1: Address, whitelist1: Map[Address,Bool], whitelist_rate1: Map[Address,Int], chain_length_inc: Int) returns (coinsRaised: Int, max_coins: Int, pref_rate: Int, rate: Int, sale_timer: Timer, token_to_send: Token, tokens_bought: Int, wallet: Address, whitelist: Map[Address,Bool], whitelist_rate: Map[Address,Int]) 
+    requires (fired(sale_timer1) || (coinsRaised1 >= max_coins1))
+    ensures ((coinsRaised >= max_coins) || fired(sale_timer))
+    {
+      coinsRaised := coinsRaised1
+      max_coins := max_coins1
+      pref_rate := pref_rate1
+      rate := rate1
+      sale_timer := sale_timer1
+      token_to_send := token_to_send1
+      tokens_bought := tokens_bought1
+      wallet := wallet1
+      whitelist := whitelist1
+      whitelist_rate := whitelist_rate1
+      
+      
+      assume chain_length_inc > 0
+      sale_timer := timer_dec(sale_timer, chain_length_inc)
+      
+    }
+    
+    method Spec02_inv_transition_number_1_from_CrowdsaleOpen_to_CrowdsaleOpen (a1: Address, b1: Address, coinsRaised1: Int, max_coins1: Int, pref_rate1: Int, r1: Int, rate1: Int, sale_timer1: Timer, token_to_send1: Token, tokens_bought1: Int, wallet1: Address, whitelist1: Map[Address,Bool], whitelist_rate1: Map[Address,Int], chain_length_inc: Int) returns (a: Address, b: Address, coinsRaised: Int, max_coins: Int, pref_rate: Int, r: Int, rate: Int, sale_timer: Timer, token_to_send: Token, tokens_bought: Int, wallet: Address, whitelist: Map[Address,Bool], whitelist_rate: Map[Address,Int]) 
+    requires ((a1 == owner()) || false)
+    requires (r1 > 0)
+    requires (a1 != null_addr())
+    {
+      a := a1
+      b := b1
+      coinsRaised := coinsRaised1
+      max_coins := max_coins1
+      pref_rate := pref_rate1
+      r := r1
+      rate := rate1
+      sale_timer := sale_timer1
+      token_to_send := token_to_send1
+      tokens_bought := tokens_bought1
+      wallet := wallet1
+      whitelist := whitelist1
+      whitelist_rate := whitelist_rate1
+      
+      
+      whitelist := whitelist[b := true]
+      whitelist_rate := whitelist_rate[b := r]
+      // send_pref_rate_change(r, b)
+      assume chain_length_inc > 0
+      sale_timer := timer_dec(sale_timer, chain_length_inc)
+      
+    }
+    
+    method Spec02_inv_transition_number_2_from_CrowdsaleOpen_to_CrowdsaleOpen (a1: Address, c1: Coin, coinsRaised1: Int, max_coins1: Int, pref_rate1: Int, rate1: Int, sale_timer1: Timer, token_to_send1: Token, tokens_bought1: Int, wallet1: Address, whitelist1: Map[Address,Bool], whitelist_rate1: Map[Address,Int], chain_length_inc: Int) returns (a: Address, c: Coin, coinsRaised: Int, max_coins: Int, pref_rate: Int, rate: Int, sale_timer: Timer, token_to_send: Token, tokens_bought: Int, wallet: Address, whitelist: Map[Address,Bool], whitelist_rate: Map[Address,Int]) 
+    requires ((active(sale_timer1) && (cvalue(c1) > 0)) && (coinsRaised1 < max_coins1))
+    requires (a1 != null_addr())
+    {
+      a := a1
+      c := c1
+      coinsRaised := coinsRaised1
+      max_coins := max_coins1
+      pref_rate := pref_rate1
+      rate := rate1
+      sale_timer := sale_timer1
+      token_to_send := token_to_send1
+      tokens_bought := tokens_bought1
+      wallet := wallet1
+      whitelist := whitelist1
+      whitelist_rate := whitelist_rate1
+      
+      
+      coinsRaised := (coinsRaised + cvalue(c))
+      // send_sale_coins(c, wallet)
+      
+      c := init_coin()
+      if (((a in whitelist) ? whitelist[a] : false)) {
+        
+        rate := ((a in whitelist_rate) ? whitelist_rate[a] : pref_rate)
+        }
+      else {
+        
+        }
+      tokens_bought := (rate * cvalue(c))
+      
+      token_to_send := tissue(tokens_bought,token_to_send)
+      
+      // send_sale_tokens(token_to_send, a)
+      
+      token_to_send := init_token()
+      assume chain_length_inc > 0
+      sale_timer := timer_dec(sale_timer, chain_length_inc)
+      
+    }
+    

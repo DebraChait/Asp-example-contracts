@@ -1,0 +1,346 @@
+
+  import "../ADT_encoding.vpr"
+  
+    
+    method ManaContinuousSale_startup_transition (bucket_amount1: Int, bucket_issuance1: Int, bucket_size1: Int, coinsRaised1: Int, inflation1: Int, rate1: Int, sale_completed1: Bool, sale_timer1: Timer, timer_bucket1: Timer, token_to_send1: Token, tokens_bought1: Int, wallet1: Address, chain_length_inc: Int) returns (bucket_amount: Int, bucket_issuance: Int, bucket_size: Int, coinsRaised: Int, inflation: Int, rate: Int, sale_completed: Bool, sale_timer: Timer, timer_bucket: Timer, token_to_send: Token, tokens_bought: Int, wallet: Address) 
+    ensures !sale_completed
+    ensures (sale_completed ==> (bucket_amount <= bucket_issuance))
+    {
+      bucket_amount := bucket_amount1
+      bucket_issuance := bucket_issuance1
+      bucket_size := bucket_size1
+      coinsRaised := coinsRaised1
+      inflation := inflation1
+      rate := rate1
+      sale_completed := sale_completed1
+      sale_timer := sale_timer1
+      timer_bucket := timer_bucket1
+      token_to_send := token_to_send1
+      tokens_bought := tokens_bought1
+      wallet := wallet1
+      
+      wallet := null_addr()
+      tokens_bought := 0
+      token_to_send := init_token()
+      timer_bucket := init_timer()
+      sale_timer := init_timer()
+      sale_completed := false
+      rate := 0
+      inflation := 0
+      coinsRaised := 0
+      bucket_size := 0
+      bucket_issuance := 0
+      bucket_amount := 0
+      
+      assume chain_length_inc > 0
+      timer_bucket := timer_dec(timer_bucket, chain_length_inc)
+      sale_timer := timer_dec(sale_timer, chain_length_inc)
+      
+    }
+    
+    method ManaContinuousSale_inv_transition_number_0_from_TrackSale_to_CheckMax (bucket_amount1: Int, bucket_issuance1: Int, bucket_size1: Int, coinsRaised1: Int, inflation1: Int, rate1: Int, sale_completed1: Bool, sale_timer1: Timer, timer_bucket1: Timer, token_to_send1: Token, tokens_bought1: Int, wallet1: Address, chain_length_inc: Int) returns (bucket_amount: Int, bucket_issuance: Int, bucket_size: Int, coinsRaised: Int, inflation: Int, rate: Int, sale_completed: Bool, sale_timer: Timer, timer_bucket: Timer, token_to_send: Token, tokens_bought: Int, wallet: Address) 
+    requires !sale_completed1
+    requires (sale_completed1 ==> (bucket_amount1 <= bucket_issuance1))
+    requires fired(timer_bucket1)
+    ensures (sale_completed ==> (bucket_amount <= bucket_issuance))
+    {
+      bucket_amount := bucket_amount1
+      bucket_issuance := bucket_issuance1
+      bucket_size := bucket_size1
+      coinsRaised := coinsRaised1
+      inflation := inflation1
+      rate := rate1
+      sale_completed := sale_completed1
+      sale_timer := sale_timer1
+      timer_bucket := timer_bucket1
+      token_to_send := token_to_send1
+      tokens_bought := tokens_bought1
+      wallet := wallet1
+      
+      
+      timer_bucket := timer_reset(timer_bucket)
+      timer_bucket := timer_set(timer_bucket, bucket_size)
+      bucket_amount := tokens_bought
+      assume chain_length_inc > 0
+      timer_bucket := timer_dec(timer_bucket, chain_length_inc)
+      sale_timer := timer_dec(sale_timer, chain_length_inc)
+      
+    }
+    
+    method ManaContinuousSale_inv_transition_number_1_from_TrackSale_to_CheckMax (bucket_amount1: Int, bucket_issuance1: Int, bucket_size1: Int, coinsRaised1: Int, inflation1: Int, rate1: Int, sale_completed1: Bool, sale_timer1: Timer, timer_bucket1: Timer, token_to_send1: Token, tokens_bought1: Int, wallet1: Address, chain_length_inc: Int) returns (bucket_amount: Int, bucket_issuance: Int, bucket_size: Int, coinsRaised: Int, inflation: Int, rate: Int, sale_completed: Bool, sale_timer: Timer, timer_bucket: Timer, token_to_send: Token, tokens_bought: Int, wallet: Address) 
+    requires !sale_completed1
+    requires (sale_completed1 ==> (bucket_amount1 <= bucket_issuance1))
+    requires active(timer_bucket1)
+    ensures (sale_completed ==> (bucket_amount <= bucket_issuance))
+    {
+      bucket_amount := bucket_amount1
+      bucket_issuance := bucket_issuance1
+      bucket_size := bucket_size1
+      coinsRaised := coinsRaised1
+      inflation := inflation1
+      rate := rate1
+      sale_completed := sale_completed1
+      sale_timer := sale_timer1
+      timer_bucket := timer_bucket1
+      token_to_send := token_to_send1
+      tokens_bought := tokens_bought1
+      wallet := wallet1
+      
+      
+      bucket_amount := (bucket_amount + tokens_bought)
+      assume chain_length_inc > 0
+      timer_bucket := timer_dec(timer_bucket, chain_length_inc)
+      sale_timer := timer_dec(sale_timer, chain_length_inc)
+      
+    }
+    
+    method ManaContinuousSale_inv_transition_number_0_from_Setup_to_Setup (a1: Address, b1: Address, bucket_amount1: Int, bucket_issuance1: Int, bucket_size1: Int, coinsRaised1: Int, inflation1: Int, rate1: Int, sale_completed1: Bool, sale_timer1: Timer, timer_bucket1: Timer, token_to_send1: Token, tokens_bought1: Int, wallet1: Address, chain_length_inc: Int) returns (a: Address, b: Address, bucket_amount: Int, bucket_issuance: Int, bucket_size: Int, coinsRaised: Int, inflation: Int, rate: Int, sale_completed: Bool, sale_timer: Timer, timer_bucket: Timer, token_to_send: Token, tokens_bought: Int, wallet: Address) 
+    requires !sale_completed1
+    requires ((a1 == owner()) || false)
+    requires (sale_completed1 ==> (bucket_amount1 <= bucket_issuance1))
+    requires (a1 != null_addr())
+    ensures !sale_completed
+    ensures (sale_completed ==> (bucket_amount <= bucket_issuance))
+    {
+      a := a1
+      b := b1
+      bucket_amount := bucket_amount1
+      bucket_issuance := bucket_issuance1
+      bucket_size := bucket_size1
+      coinsRaised := coinsRaised1
+      inflation := inflation1
+      rate := rate1
+      sale_completed := sale_completed1
+      sale_timer := sale_timer1
+      timer_bucket := timer_bucket1
+      token_to_send := token_to_send1
+      tokens_bought := tokens_bought1
+      wallet := wallet1
+      
+      // Error: action_to_string: unknown module call
+      assume chain_length_inc > 0
+      timer_bucket := timer_dec(timer_bucket, chain_length_inc)
+      sale_timer := timer_dec(sale_timer, chain_length_inc)
+      
+    }
+    
+    method ManaContinuousSale_inv_transition_number_1_from_Setup_to_CrowdsaleOpen (a1: Address, bs1: Int, bucket_amount1: Int, bucket_issuance1: Int, bucket_size1: Int, coinsRaised1: Int, inf1: Int, inflation1: Int, r1: Int, rate1: Int, sale_completed1: Bool, sale_timer1: Timer, timer_bucket1: Timer, token_to_send1: Token, tokens_bought1: Int, w1: Address, wallet1: Address, chain_length_inc: Int) returns (a: Address, bs: Int, bucket_amount: Int, bucket_issuance: Int, bucket_size: Int, coinsRaised: Int, inf: Int, inflation: Int, r: Int, rate: Int, sale_completed: Bool, sale_timer: Timer, timer_bucket: Timer, token_to_send: Token, tokens_bought: Int, w: Address, wallet: Address) 
+    requires !sale_completed1
+    requires ((a1 == owner()) || false)
+    requires (sale_completed1 ==> (bucket_amount1 <= bucket_issuance1))
+    requires (bs1 > 0)
+    requires (a1 != null_addr())
+    ensures (sale_completed ==> (bucket_amount <= bucket_issuance))
+    {
+      a := a1
+      bs := bs1
+      bucket_amount := bucket_amount1
+      bucket_issuance := bucket_issuance1
+      bucket_size := bucket_size1
+      coinsRaised := coinsRaised1
+      inf := inf1
+      inflation := inflation1
+      r := r1
+      rate := rate1
+      sale_completed := sale_completed1
+      sale_timer := sale_timer1
+      timer_bucket := timer_bucket1
+      token_to_send := token_to_send1
+      tokens_bought := tokens_bought1
+      w := w1
+      wallet := wallet1
+      
+      
+      timer_bucket := timer_set(timer_bucket, bs)
+      bucket_size := bs
+      wallet := w
+      rate := r
+      inflation := inf
+      bucket_issuance := ((1000 * inflation) / 100)
+      bucket_issuance := (bucket_issuance / bucket_size)
+      assume chain_length_inc > 0
+      timer_bucket := timer_dec(timer_bucket, chain_length_inc)
+      sale_timer := timer_dec(sale_timer, chain_length_inc)
+      
+    }
+    
+    method ManaContinuousSale_inv_transition_number_0_from_Paused_to_CrowdsaleOpen (a1: Address, bucket_amount1: Int, bucket_issuance1: Int, bucket_size1: Int, coinsRaised1: Int, inflation1: Int, rate1: Int, sale_completed1: Bool, sale_timer1: Timer, timer_bucket1: Timer, token_to_send1: Token, tokens_bought1: Int, wallet1: Address, chain_length_inc: Int) returns (a: Address, bucket_amount: Int, bucket_issuance: Int, bucket_size: Int, coinsRaised: Int, inflation: Int, rate: Int, sale_completed: Bool, sale_timer: Timer, timer_bucket: Timer, token_to_send: Token, tokens_bought: Int, wallet: Address) 
+    requires ((a1 == owner()) || false)
+    requires (sale_completed1 ==> (bucket_amount1 <= bucket_issuance1))
+    requires (a1 != null_addr())
+    ensures (sale_completed ==> (bucket_amount <= bucket_issuance))
+    {
+      a := a1
+      bucket_amount := bucket_amount1
+      bucket_issuance := bucket_issuance1
+      bucket_size := bucket_size1
+      coinsRaised := coinsRaised1
+      inflation := inflation1
+      rate := rate1
+      sale_completed := sale_completed1
+      sale_timer := sale_timer1
+      timer_bucket := timer_bucket1
+      token_to_send := token_to_send1
+      tokens_bought := tokens_bought1
+      wallet := wallet1
+      
+      
+      assume chain_length_inc > 0
+      timer_bucket := timer_dec(timer_bucket, chain_length_inc)
+      sale_timer := timer_dec(sale_timer, chain_length_inc)
+      
+    }
+    
+    method ManaContinuousSale_inv_transition_number_0_from_CrowdsaleOpen_to_Paused (a1: Address, bucket_amount1: Int, bucket_issuance1: Int, bucket_size1: Int, coinsRaised1: Int, inflation1: Int, rate1: Int, sale_completed1: Bool, sale_timer1: Timer, timer_bucket1: Timer, token_to_send1: Token, tokens_bought1: Int, wallet1: Address, chain_length_inc: Int) returns (a: Address, bucket_amount: Int, bucket_issuance: Int, bucket_size: Int, coinsRaised: Int, inflation: Int, rate: Int, sale_completed: Bool, sale_timer: Timer, timer_bucket: Timer, token_to_send: Token, tokens_bought: Int, wallet: Address) 
+    requires ((a1 == owner()) || false)
+    requires (sale_completed1 ==> (bucket_amount1 <= bucket_issuance1))
+    requires (a1 != null_addr())
+    ensures (sale_completed ==> (bucket_amount <= bucket_issuance))
+    {
+      a := a1
+      bucket_amount := bucket_amount1
+      bucket_issuance := bucket_issuance1
+      bucket_size := bucket_size1
+      coinsRaised := coinsRaised1
+      inflation := inflation1
+      rate := rate1
+      sale_completed := sale_completed1
+      sale_timer := sale_timer1
+      timer_bucket := timer_bucket1
+      token_to_send := token_to_send1
+      tokens_bought := tokens_bought1
+      wallet := wallet1
+      
+      
+      assume chain_length_inc > 0
+      timer_bucket := timer_dec(timer_bucket, chain_length_inc)
+      sale_timer := timer_dec(sale_timer, chain_length_inc)
+      
+    }
+    
+    method ManaContinuousSale_inv_transition_number_1_from_CrowdsaleOpen_to_CrowdsaleOpen (a1: Address, bucket_amount1: Int, bucket_issuance1: Int, bucket_size1: Int, coinsRaised1: Int, inflation1: Int, r1: Int, rate1: Int, sale_completed1: Bool, sale_timer1: Timer, timer_bucket1: Timer, token_to_send1: Token, tokens_bought1: Int, wallet1: Address, chain_length_inc: Int) returns (a: Address, bucket_amount: Int, bucket_issuance: Int, bucket_size: Int, coinsRaised: Int, inflation: Int, r: Int, rate: Int, sale_completed: Bool, sale_timer: Timer, timer_bucket: Timer, token_to_send: Token, tokens_bought: Int, wallet: Address) 
+    requires ((a1 == owner()) || false)
+    requires (sale_completed1 ==> (bucket_amount1 <= bucket_issuance1))
+    requires (a1 != null_addr())
+    ensures (sale_completed ==> (bucket_amount <= bucket_issuance))
+    {
+      a := a1
+      bucket_amount := bucket_amount1
+      bucket_issuance := bucket_issuance1
+      bucket_size := bucket_size1
+      coinsRaised := coinsRaised1
+      inflation := inflation1
+      r := r1
+      rate := rate1
+      sale_completed := sale_completed1
+      sale_timer := sale_timer1
+      timer_bucket := timer_bucket1
+      token_to_send := token_to_send1
+      tokens_bought := tokens_bought1
+      wallet := wallet1
+      
+      
+      rate := r
+      // log_new_rate(rate)
+      assume chain_length_inc > 0
+      timer_bucket := timer_dec(timer_bucket, chain_length_inc)
+      sale_timer := timer_dec(sale_timer, chain_length_inc)
+      
+    }
+    
+    method ManaContinuousSale_inv_transition_number_2_from_CrowdsaleOpen_to_CrowdsaleOpen (a1: Address, b1: Address, bucket_amount1: Int, bucket_issuance1: Int, bucket_size1: Int, coinsRaised1: Int, inflation1: Int, rate1: Int, sale_completed1: Bool, sale_timer1: Timer, timer_bucket1: Timer, token_to_send1: Token, tokens_bought1: Int, wallet1: Address, chain_length_inc: Int) returns (a: Address, b: Address, bucket_amount: Int, bucket_issuance: Int, bucket_size: Int, coinsRaised: Int, inflation: Int, rate: Int, sale_completed: Bool, sale_timer: Timer, timer_bucket: Timer, token_to_send: Token, tokens_bought: Int, wallet: Address) 
+    requires ((a1 == owner()) || false)
+    requires (sale_completed1 ==> (bucket_amount1 <= bucket_issuance1))
+    requires (a1 != null_addr())
+    ensures (sale_completed ==> (bucket_amount <= bucket_issuance))
+    {
+      a := a1
+      b := b1
+      bucket_amount := bucket_amount1
+      bucket_issuance := bucket_issuance1
+      bucket_size := bucket_size1
+      coinsRaised := coinsRaised1
+      inflation := inflation1
+      rate := rate1
+      sale_completed := sale_completed1
+      sale_timer := sale_timer1
+      timer_bucket := timer_bucket1
+      token_to_send := token_to_send1
+      tokens_bought := tokens_bought1
+      wallet := wallet1
+      
+      
+      wallet := b
+      assume chain_length_inc > 0
+      timer_bucket := timer_dec(timer_bucket, chain_length_inc)
+      sale_timer := timer_dec(sale_timer, chain_length_inc)
+      
+    }
+    
+    method ManaContinuousSale_inv_transition_number_3_from_CrowdsaleOpen_to_TrackSale (a1: Address, bucket_amount1: Int, bucket_issuance1: Int, bucket_size1: Int, c1: Coin, coinsRaised1: Int, inflation1: Int, rate1: Int, sale_completed1: Bool, sale_timer1: Timer, timer_bucket1: Timer, token_to_send1: Token, tokens_bought1: Int, wallet1: Address, chain_length_inc: Int) returns (a: Address, bucket_amount: Int, bucket_issuance: Int, bucket_size: Int, c: Coin, coinsRaised: Int, inflation: Int, rate: Int, sale_completed: Bool, sale_timer: Timer, timer_bucket: Timer, token_to_send: Token, tokens_bought: Int, wallet: Address) 
+    requires (sale_completed1 ==> (bucket_amount1 <= bucket_issuance1))
+    requires (cvalue(c1) > 0)
+    requires (a1 != null_addr())
+    ensures !sale_completed
+    ensures (sale_completed ==> (bucket_amount <= bucket_issuance))
+    {
+      a := a1
+      bucket_amount := bucket_amount1
+      bucket_issuance := bucket_issuance1
+      bucket_size := bucket_size1
+      c := c1
+      coinsRaised := coinsRaised1
+      inflation := inflation1
+      rate := rate1
+      sale_completed := sale_completed1
+      sale_timer := sale_timer1
+      timer_bucket := timer_bucket1
+      token_to_send := token_to_send1
+      tokens_bought := tokens_bought1
+      wallet := wallet1
+      
+      
+      coinsRaised := (coinsRaised + cvalue(c))
+      // send_sale_coins(c, wallet)
+      
+      c := init_coin()
+      tokens_bought := (rate * cvalue(c))
+      
+      token_to_send := tissue(tokens_bought,token_to_send)
+      
+      // send_sale_tokens(token_to_send, a)
+      
+      token_to_send := init_token()
+      sale_completed := false
+      assume chain_length_inc > 0
+      timer_bucket := timer_dec(timer_bucket, chain_length_inc)
+      sale_timer := timer_dec(sale_timer, chain_length_inc)
+      
+    }
+    
+    method ManaContinuousSale_inv_transition_number_0_from_CheckMax_to_CrowdsaleOpen (bucket_amount1: Int, bucket_issuance1: Int, bucket_size1: Int, coinsRaised1: Int, inflation1: Int, rate1: Int, sale_completed1: Bool, sale_timer1: Timer, timer_bucket1: Timer, token_to_send1: Token, tokens_bought1: Int, wallet1: Address, chain_length_inc: Int) returns (bucket_amount: Int, bucket_issuance: Int, bucket_size: Int, coinsRaised: Int, inflation: Int, rate: Int, sale_completed: Bool, sale_timer: Timer, timer_bucket: Timer, token_to_send: Token, tokens_bought: Int, wallet: Address) 
+    requires (sale_completed1 ==> (bucket_amount1 <= bucket_issuance1))
+    requires (bucket_amount1 < bucket_issuance1)
+    ensures (sale_completed ==> (bucket_amount <= bucket_issuance))
+    {
+      bucket_amount := bucket_amount1
+      bucket_issuance := bucket_issuance1
+      bucket_size := bucket_size1
+      coinsRaised := coinsRaised1
+      inflation := inflation1
+      rate := rate1
+      sale_completed := sale_completed1
+      sale_timer := sale_timer1
+      timer_bucket := timer_bucket1
+      token_to_send := token_to_send1
+      tokens_bought := tokens_bought1
+      wallet := wallet1
+      
+      
+      sale_completed := true
+      assume chain_length_inc > 0
+      timer_bucket := timer_dec(timer_bucket, chain_length_inc)
+      sale_timer := timer_dec(sale_timer, chain_length_inc)
+      
+    }
+    

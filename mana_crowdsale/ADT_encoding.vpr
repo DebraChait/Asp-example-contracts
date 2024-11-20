@@ -1,0 +1,270 @@
+// ************* Address domain *************
+domain Address {
+    function null_addr() : Address 
+}
+
+
+// ************* Coin domain *************
+domain Coin {
+    function cvalue(Coin) : Int 
+    axiom cvalue_non_neg {
+        forall c: Coin ::
+            cvalue(c) >= 0
+    }
+
+    // create an empty coin variable
+    function init_coin() : Coin 
+    axiom init_coin_prop {
+        cvalue(init_coin()) == 0
+    }
+}
+
+method cmove(a: Coin, i: Int, b: Coin)
+returns(a1: Coin, b1: Coin)
+//requires cvalue(a) >= i && i >= 0
+ensures cvalue(a1) == cvalue(a)-i && cvalue(b1) == cvalue(b) + i
+
+method cmove_all(a: Coin, b: Coin)
+returns(a1: Coin, b1: Coin)
+//requires a != b
+ensures cvalue(a1) == 0 && cvalue(b1) == cvalue(b) + cvalue(a)
+
+method csend(c: Coin, a: Address)
+returns(c1: Coin)
+ensures cvalue(c1) == 0
+
+
+// ************* Token domain *************
+domain Token {
+    function tvalue(Token) : Int 
+    axiom tvalue_non_neg {
+        forall t: Token ::
+            tvalue(t) >= 0
+    }
+
+    // create an empty token variable 
+    function init_token() : Token 
+    axiom init_token_prop {
+        tvalue(init_token()) == 0
+    }
+}
+
+method tmove(a: Token, i: Int, b: Token)
+returns(a1: Token, b1: Token) 
+ensures tvalue(a1) == tvalue(a)-i && tvalue(b1) == tvalue(b)+i
+
+method tmove_all(a: Token, b: Token)
+returns(a1: Token, b1: Token)
+ensures tvalue(a1) == 0 && tvalue(b1) == tvalue(b)+tvalue(a)
+
+// token_store state variable is included with every contract that issues tokens, passed from method to method
+// method tissue(store: Int, i: Int, a: Token)
+// returns(store1: Int, a1: Token)
+// ensures store1 == store-i && tvalue(a1) == tvalue(a)+i
+method tissue(i: Int, a: Token)
+returns(a1: Token)
+ensures tvalue(a1) == tvalue(a)+i
+
+method tburn(a: Token, i: Int)
+returns(a1: Token)
+ensures tvalue(a1) == tvalue(a)-i 
+
+method tsend(t: Token, a: Address)
+returns(t1: Token)
+ensures tvalue(t1) == 0
+
+
+// ************* Contract domain *************
+domain Contract {
+    // this domain is kind of meta
+    function self() : Address 
+    function creator() : Address
+    function owner() : Address
+}
+
+method change_owner(a: Address, b: Address)
+requires a == owner()
+ensures owner() == b && owner() != a
+
+
+
+
+// ************* Timer domain *************
+domain Timer {
+    // timer states
+    function active(Timer) : Bool 
+    function fired(Timer) : Bool 
+    function off(Timer) : Bool 
+    // timer operations
+    function timer_set(Timer, Int) : Timer 
+    function timer_reset(Timer) : Timer 
+    function timer_off(Timer) : Timer
+    // initialize a timer
+    function init_timer() : Timer
+    // get time remaining (for internal use only)
+    function time_left(Timer) : Int
+    // decrement a timer (for internal use only)
+    function timer_dec(Timer, Int) : Timer 
+
+    // timer states are mutually exclusive
+    axiom states_mutually_exclsuive {
+        forall t:Timer ::
+            (active(t) ==> !fired(t) && !off(t)) &&
+            (fired(t) ==> !active(t) && !off(t)) &&
+            (off(t) ==> !active(t) && !fired(t)) &&
+	    (off(t) || active(t) || fired(t))
+    }
+
+    // initialized timers start in state off 
+    axiom initial_state_off {
+        off(init_timer())
+    }
+
+    // timer_set transitions a timer from off to active if i > 0
+    axiom set_pos_poststate {
+        forall t: Timer, i: Int ::
+            off(t) && i > 0 ==> active(timer_set(t,i))
+    }
+
+    // timer_set transitions a timer from off to fired if i = 0
+    axiom set_zero_poststate {
+        forall t: Timer ::
+            off(t) ==> fired(timer_set(t,0))
+    }
+
+    // timer_reset transitions a timer from fired to off
+    axiom reset_poststate {
+        forall t: Timer ::
+            fired(t) ==> off(timer_reset(t))
+    }
+
+    // timer_off always transitions a timer to off
+    axiom off_poststate {
+        forall t: Timer ::
+            // off(timer_off(t))
+            timer_off(t) == init_timer()
+    }
+
+    // time left for a timer set
+    axiom time_left_set {
+        forall t: Timer, i: Int ::
+            time_left(timer_set(t, i)) == i
+    }
+
+    // decrement decrements the time left in the timer by the specified amount
+    axiom timer_dec_spec {
+        forall t: Timer, i: Int ::
+            time_left(timer_dec(t, i)) == time_left(t) - i
+    }
+
+    // zero or negative time left after a dec means a timer has fired
+    axiom nonpos_time_left {
+        forall t: Timer, i: Int ::
+            active(t) && time_left(timer_dec(t, i)) <= 0 ==> fired(timer_dec(t,i))
+    }
+
+    // positive time left after a dec means a timer is active
+    axiom pos_time_left {
+        forall t: Timer, i: Int ::
+            active(t) && time_left(timer_dec(t, i)) > 0 ==> active(timer_dec(t,i))
+    }
+
+    // after a decrement, a fired timer stays fired
+    axiom fired_dec {
+       forall t: Timer, i:Int::
+          fired(t) ==> fired(timer_dec(t,i))
+    }
+
+    // an active timer must have non-zero time left
+    axiom active_timer {
+       forall t:Timer::
+          active(t) ==> time_left(t) > 0
+    }
+}
+
+
+// ************* Tuple domain *************
+// from the struct encoding in Robin Sierra's thesis
+// now part of the 2vyper project
+// https://github.com/viperproject/2vyper/blob/master/src/twovyper/resources/struct.vpr
+domain Tuple{
+    function tuple_loc(t: Tuple, i: Int) : Int // takes a tuple and an index, and maps that member to a location
+}
+domain TupleOps[T]{ // parameterized by type of element you are getting or setting
+    function tuple_get_domain(i: Int): T // retrieve the member stored at the specified location, use tuple_loc(t,index) as input -- macro defined below for easier use
+    function tuple_set(t: Tuple, i: Int, v: T) : Tuple // returns new tuple t[i := v], inputs are as expected
+
+    // location of tuple returned by a set gives expected (set) value with a get
+    axiom get_set_ax {
+        forall t:Tuple, i: Int, v: T :: {tuple_loc(tuple_set(t,i,v),i)}
+        tuple_get_domain(tuple_loc(tuple_set(t,i,v),i)) == v 
+    }
+    // setting a tuple at an index does not change the location of any other indices of the tuple
+    axiom set_get_ax {
+        forall t:Tuple, i1: Int, i2: Int, v: T :: {tuple_loc(tuple_set(t,i2,v),i1)}
+        i1 != i2 ==>
+        tuple_loc(t,i1) == tuple_loc(tuple_set(t,i2,v),i1)
+    }
+
+    // added
+    // only checks for membership within size boundss
+    function tuple_in(t: Tuple, v:T) : Bool 
+    axiom tuple_in_ax {
+        forall t: Tuple, v:T :: {tuple_in(t,v)}
+        tuple_in(t,v) <==> exists i: Int :: 0 <= i && i < tuple_get_domain(tuple_loc(t,-1)) && tuple_get_domain(tuple_loc(t,i)) == v 
+    }
+
+    // added
+    // nothing to enforce non-negative indexing, can be enforced by ASP
+    // using index -1 to store size, macro size defined below
+    axiom size_nonneg {
+        forall t: Tuple :: 
+        tuple_get_domain(tuple_loc(t,-1)) >= 0
+    }
+
+    // **** ONLY WORKS WHEN SETTING ALL THE SAME TYPE ****
+    // function tuple_init(vals: Seq[T]): Tuple // returns new tuple t[0 := vals[0], 1 := vals[1], ...]
+    // // location of tuple returned by an init gives expected (initialized) values with a get
+    // axiom get_init_ax {
+    //     forall t: Tuple, vals: Seq[T], i: Int ::
+    //     0 <= i && i < |vals| ==>
+    //     tuple_get_domain(tuple_loc(tuple_init(vals),i)) == vals[i]
+    // }
+    // // init has the same effect as setting each individual val
+    // axiom set_init_ax {
+    //     forall t: Tuple, vals: Seq[T], i: Int ::
+    //     0 <= i && i < |vals| ==> tuple_set(tuple_init(vals),i,vals[i]) == t
+    // }
+}
+
+define tuple_get(t, i)
+    tuple_get_domain(tuple_loc(t,i))
+
+define size(t)
+    tuple_get(t,-1)
+
+
+// currently not using this, using assumes instead
+// can't change size of tuple in current version of ASP
+// method set_size(t: Tuple, s: Int)
+// returns(tnew: Tuple)
+// ensures size(tnew) == s
+// ensures forall i: Int :: {tuple_get(t,i)} {tuple_get(tnew,i)} 
+//         i != -1 ==> tuple_get(t,i) == tuple_get(tnew,i)
+// {
+//     tnew := tuple_set(t,-1,s)
+// }
+
+
+
+// ************* scratch / for later *************
+// if we do a hacky route
+// domain Pair[A,B] {
+//     function cons_pair(a: A, b: B) : Pair[A,B]
+//     function first(x: Pair[A,B]) : A 
+//     function second(x: Pair[A,B]) : B 
+//     axiom pair_inj {
+//         forall t: Pair[A,B], a: A, b: B ::
+//             first(cons_pair(a,b)) == a && second(cons_pair(a,b)) == b
+//     }
+// }

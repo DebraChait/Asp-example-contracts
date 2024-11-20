@@ -1,0 +1,212 @@
+
+  import "../ADT_encoding.vpr"
+  
+    
+    method SafeRemotePurchase_startup_transition (buyer1: Address, buyer_deposit1: Coin, item1: Int, payment1: Coin, seller1: Address, seller_deposit1: Coin, value1: Int) returns (buyer: Address, buyer_deposit: Coin, item: Int, payment: Coin, seller: Address, seller_deposit: Coin, value: Int) 
+    ensures ((buyer == null_addr()) && (seller_deposit == init_coin()))
+    ensures ((cvalue(buyer_deposit) == 0) || (cvalue(buyer_deposit) == value))
+    ensures ((cvalue(seller_deposit) == 0) || (cvalue(seller_deposit) == (2 * value)))
+    ensures ((buyer == null_addr()) <==> ((buyer_deposit == init_coin()) && (payment == init_coin())))
+    ensures ((seller != null_addr()) <==> ((value > 0) && (cvalue(seller_deposit) > 0)))
+    {
+      buyer := buyer1
+      buyer_deposit := buyer_deposit1
+      item := item1
+      payment := payment1
+      seller := seller1
+      seller_deposit := seller_deposit1
+      value := value1
+      
+      value := 0
+      seller_deposit := init_coin()
+      seller := null_addr()
+      payment := init_coin()
+      item := 0
+      buyer_deposit := init_coin()
+      buyer := null_addr()
+      
+      
+      
+    }
+    
+    method SafeRemotePurchase_inv_transition_number_0_from_ShipItem_to_ReceivedItem (a1: Address, buyer1: Address, buyer_deposit1: Coin, item1: Int, payment1: Coin, seller1: Address, seller_deposit1: Coin, value1: Int) returns (a: Address, buyer: Address, buyer_deposit: Coin, item: Int, payment: Coin, seller: Address, seller_deposit: Coin, value: Int) 
+    requires (((buyer1 != null_addr()) && (seller1 != null_addr())) && (cvalue(payment1) == value1))
+    requires ((a1 == seller1) || false)
+    requires ((cvalue(buyer_deposit1) == 0) || (cvalue(buyer_deposit1) == value1))
+    requires ((cvalue(seller_deposit1) == 0) || (cvalue(seller_deposit1) == (2 * value1)))
+    requires ((buyer1 == null_addr()) <==> ((buyer_deposit1 == init_coin()) && (payment1 == init_coin())))
+    requires ((seller1 != null_addr()) <==> ((value1 > 0) && (cvalue(seller_deposit1) > 0)))
+    requires (a1 != null_addr())
+    ensures (((buyer != null_addr()) && (seller != null_addr())) && (cvalue(payment) == value))
+    ensures ((cvalue(buyer_deposit) == 0) || (cvalue(buyer_deposit) == value))
+    ensures ((cvalue(seller_deposit) == 0) || (cvalue(seller_deposit) == (2 * value)))
+    ensures ((buyer == null_addr()) <==> ((buyer_deposit == init_coin()) && (payment == init_coin())))
+    ensures ((seller != null_addr()) <==> ((value > 0) && (cvalue(seller_deposit) > 0)))
+    {
+      a := a1
+      buyer := buyer1
+      buyer_deposit := buyer_deposit1
+      item := item1
+      payment := payment1
+      seller := seller1
+      seller_deposit := seller_deposit1
+      value := value1
+      
+      
+      // send_item_shipped(buyer)
+      
+      
+    }
+    
+    method SafeRemotePurchase_inv_transition_number_0_from_ReceivedItem_to_PostItem (a1: Address, buyer1: Address, buyer_deposit1: Coin, item1: Int, payment1: Coin, seller1: Address, seller_deposit1: Coin, value1: Int) returns (a: Address, buyer: Address, buyer_deposit: Coin, item: Int, payment: Coin, seller: Address, seller_deposit: Coin, value: Int) 
+    requires (((buyer1 != null_addr()) && (seller1 != null_addr())) && (cvalue(payment1) == value1))
+    requires ((a1 == buyer1) || false)
+    requires ((cvalue(buyer_deposit1) == 0) || (cvalue(buyer_deposit1) == value1))
+    requires ((cvalue(seller_deposit1) == 0) || (cvalue(seller_deposit1) == (2 * value1)))
+    requires ((buyer1 == null_addr()) <==> ((buyer_deposit1 == init_coin()) && (payment1 == init_coin())))
+    requires ((seller1 != null_addr()) <==> ((value1 > 0) && (cvalue(seller_deposit1) > 0)))
+    requires (a1 != null_addr())
+    ensures ((buyer == null_addr()) && (seller_deposit == init_coin()))
+    ensures ((cvalue(buyer_deposit) == 0) || (cvalue(buyer_deposit) == value))
+    ensures ((cvalue(seller_deposit) == 0) || (cvalue(seller_deposit) == (2 * value)))
+    ensures ((buyer == null_addr()) <==> ((buyer_deposit == init_coin()) && (payment == init_coin())))
+    ensures ((seller != null_addr()) <==> ((value > 0) && (cvalue(seller_deposit) > 0)))
+    {
+      a := a1
+      buyer := buyer1
+      buyer_deposit := buyer_deposit1
+      item := item1
+      payment := payment1
+      seller := seller1
+      seller_deposit := seller_deposit1
+      value := value1
+      
+      
+      // send_return_deposit(buyer_deposit, buyer)
+      
+      buyer_deposit := init_coin()
+      // send_return_deposit(seller_deposit, seller)
+      
+      seller_deposit := init_coin()
+      // send_deliver_payment(payment, seller)
+      
+      payment := init_coin()
+      buyer := null_addr()
+      seller := null_addr()
+      value := 0
+      
+      
+    }
+    
+    method SafeRemotePurchase_inv_transition_number_0_from_PostItem_to_ItemPosted (a1: Address, buyer1: Address, buyer_deposit1: Coin, dep1: Coin, id1: Int, item1: Int, payment1: Coin, seller1: Address, seller_deposit1: Coin, value1: Int) returns (a: Address, buyer: Address, buyer_deposit: Coin, dep: Coin, id: Int, item: Int, payment: Coin, seller: Address, seller_deposit: Coin, value: Int) 
+    requires ((cvalue(dep1) > 0) && ((cvalue(dep1) % 2) == 0))
+    requires ((buyer1 == null_addr()) && (seller_deposit1 == init_coin()))
+    requires ((cvalue(buyer_deposit1) == 0) || (cvalue(buyer_deposit1) == value1))
+    requires ((cvalue(seller_deposit1) == 0) || (cvalue(seller_deposit1) == (2 * value1)))
+    requires ((buyer1 == null_addr()) <==> ((buyer_deposit1 == init_coin()) && (payment1 == init_coin())))
+    requires ((seller1 != null_addr()) <==> ((value1 > 0) && (cvalue(seller_deposit1) > 0)))
+    requires (a1 != null_addr())
+    ensures ((buyer == null_addr()) && (seller != null_addr()))
+    ensures ((cvalue(buyer_deposit) == 0) || (cvalue(buyer_deposit) == value))
+    ensures ((cvalue(seller_deposit) == 0) || (cvalue(seller_deposit) == (2 * value)))
+    ensures ((buyer == null_addr()) <==> ((buyer_deposit == init_coin()) && (payment == init_coin())))
+    ensures ((seller != null_addr()) <==> ((value > 0) && (cvalue(seller_deposit) > 0)))
+    {
+      a := a1
+      buyer := buyer1
+      buyer_deposit := buyer_deposit1
+      dep := dep1
+      id := id1
+      item := item1
+      payment := payment1
+      seller := seller1
+      seller_deposit := seller_deposit1
+      value := value1
+      
+      
+      item := id
+      
+      
+      dep, seller_deposit := cmove_all(dep, seller_deposit)
+      
+      
+      value := (cvalue(seller_deposit) / 2)
+      seller := a
+      
+      
+    }
+    
+    method SafeRemotePurchase_inv_transition_number_0_from_ItemPosted_to_ShipItem (a1: Address, buyer1: Address, buyer_deposit1: Coin, id1: Int, item1: Int, p1: Coin, payment1: Coin, seller1: Address, seller_deposit1: Coin, value1: Int) returns (a: Address, buyer: Address, buyer_deposit: Coin, id: Int, item: Int, p: Coin, payment: Coin, seller: Address, seller_deposit: Coin, value: Int) 
+    requires ((buyer1 == null_addr()) && (seller1 != null_addr()))
+    requires ((id1 == item1) && (cvalue(p1) == (2 * value1)))
+    requires ((cvalue(buyer_deposit1) == 0) || (cvalue(buyer_deposit1) == value1))
+    requires ((cvalue(seller_deposit1) == 0) || (cvalue(seller_deposit1) == (2 * value1)))
+    requires ((buyer1 == null_addr()) <==> ((buyer_deposit1 == init_coin()) && (payment1 == init_coin())))
+    requires ((seller1 != null_addr()) <==> ((value1 > 0) && (cvalue(seller_deposit1) > 0)))
+    requires (a1 != null_addr())
+    ensures (((buyer != null_addr()) && (seller != null_addr())) && (cvalue(payment) == value))
+    ensures ((cvalue(buyer_deposit) == 0) || (cvalue(buyer_deposit) == value))
+    ensures ((cvalue(seller_deposit) == 0) || (cvalue(seller_deposit) == (2 * value)))
+    ensures ((buyer == null_addr()) <==> ((buyer_deposit == init_coin()) && (payment == init_coin())))
+    ensures ((seller != null_addr()) <==> ((value > 0) && (cvalue(seller_deposit) > 0)))
+    {
+      a := a1
+      buyer := buyer1
+      buyer_deposit := buyer_deposit1
+      id := id1
+      item := item1
+      p := p1
+      payment := payment1
+      seller := seller1
+      seller_deposit := seller_deposit1
+      value := value1
+      
+      
+      
+      
+      p, buyer_deposit := cmove(p, value, buyer_deposit)
+      
+      
+      
+      
+      p, payment := cmove(p, value, payment)
+      
+      
+      buyer := a
+      // send_purchaser(a, seller)
+      
+      
+    }
+    
+    method SafeRemotePurchase_inv_transition_number_1_from_ItemPosted_to_PostItem (a1: Address, buyer1: Address, buyer_deposit1: Coin, item1: Int, payment1: Coin, seller1: Address, seller_deposit1: Coin, value1: Int) returns (a: Address, buyer: Address, buyer_deposit: Coin, item: Int, payment: Coin, seller: Address, seller_deposit: Coin, value: Int) 
+    requires ((buyer1 == null_addr()) && (seller1 != null_addr()))
+    requires ((a1 == seller1) || false)
+    requires ((cvalue(buyer_deposit1) == 0) || (cvalue(buyer_deposit1) == value1))
+    requires ((cvalue(seller_deposit1) == 0) || (cvalue(seller_deposit1) == (2 * value1)))
+    requires ((buyer1 == null_addr()) <==> ((buyer_deposit1 == init_coin()) && (payment1 == init_coin())))
+    requires ((seller1 != null_addr()) <==> ((value1 > 0) && (cvalue(seller_deposit1) > 0)))
+    requires (a1 != null_addr())
+    ensures ((buyer == null_addr()) && (seller_deposit == init_coin()))
+    ensures ((cvalue(buyer_deposit) == 0) || (cvalue(buyer_deposit) == value))
+    ensures ((cvalue(seller_deposit) == 0) || (cvalue(seller_deposit) == (2 * value)))
+    ensures ((buyer == null_addr()) <==> ((buyer_deposit == init_coin()) && (payment == init_coin())))
+    ensures ((seller != null_addr()) <==> ((value > 0) && (cvalue(seller_deposit) > 0)))
+    {
+      a := a1
+      buyer := buyer1
+      buyer_deposit := buyer_deposit1
+      item := item1
+      payment := payment1
+      seller := seller1
+      seller_deposit := seller_deposit1
+      value := value1
+      
+      
+      // send_return_deposit(seller_deposit, seller)
+      
+      seller_deposit := init_coin()
+      seller := null_addr()
+      
+      
+    }
+    

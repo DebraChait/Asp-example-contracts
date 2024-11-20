@@ -1,0 +1,19 @@
+invariance RefundsCorrect {
+  
+        /* refunds are correct: non-highest bidders get refunded everything, and highest bidder gets refunded everything except their winning bid */
+        
+        always Map.get(refunded, beneficiary) == 0 ==> Map.get(refunded, maxBidder) == Map.get(bidded, maxBidder) - Coin.value(maxBid)
+        always Map.get(refunded, beneficiary) > 0 ==> Map.get(refunded, maxBidder) == Map.get(bidded, maxBidder) - Map.get(refunded, beneficiary)
+        always (forall b: address : (b != maxBidder && b != beneficiary) ==> Map.get(refunded, b) == Map.get(bidded, b))
+
+        always maxBidder != beneficiary
+        
+
+        @StartAuction 
+            Map.get(refunded, beneficiary) == 0           
+
+        @AuctionOpen 
+            Map.get(refunded, beneficiary) == 0
+
+
+}

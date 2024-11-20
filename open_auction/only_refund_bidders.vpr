@@ -1,0 +1,200 @@
+
+  import "../ADT_encoding.vpr"
+  
+    
+    method OnlyRefundBidders_startup_transition (balance1: Int, beneficiary1: Address, bidded1: Map[Address,Int], bidding_time1: Int, currentBid1: Int, currentBidder1: Address, maxBid1: Coin, maxBidder1: Address, oldmaxBid1: Int, oldmaxBidder1: Address, refunded1: Map[Address,Int], tmr1: Timer, winningBid1: Int, chain_length_inc: Int) returns (balance: Int, beneficiary: Address, bidded: Map[Address,Int], bidding_time: Int, currentBid: Int, currentBidder: Address, maxBid: Coin, maxBidder: Address, oldmaxBid: Int, oldmaxBidder: Address, refunded: Map[Address,Int], tmr: Timer, winningBid: Int) 
+    requires ((beneficiary1 != null_addr()) && (bidding_time1 > 0))
+    ensures ((((((cvalue(maxBid) == 0) && (maxBidder == null_addr())) && (currentBid == 0)) && (currentBidder == null_addr())) && (balance == 0)) && (((beneficiary in refunded) ? refunded[beneficiary] : 0) == 0))
+    ensures ((maxBidder != beneficiary) && (currentBidder != beneficiary))
+    ensures ((((beneficiary in refunded) ? refunded[beneficiary] : 0) > 0) ==> ((((maxBidder in refunded) ? refunded[maxBidder] : 0) + winningBid) == ((maxBidder in bidded) ? bidded[maxBidder] : 0)))
+    ensures ((((maxBidder in bidded) ? bidded[maxBidder] : 0) == 0) ==> (((maxBidder in refunded) ? refunded[maxBidder] : 0) == 0))
+    ensures ((((beneficiary in refunded) ? refunded[beneficiary] : 0) == 0) ==> ((((maxBidder in refunded) ? refunded[maxBidder] : 0) + cvalue(maxBid)) == ((maxBidder in bidded) ? bidded[maxBidder] : 0)))
+    ensures ((currentBidder != null_addr()) ==> (((currentBidder in bidded) ? bidded[currentBidder] : 0) > 0))
+    ensures (beneficiary != null_addr())
+    ensures (forall b: Address:: (((b != null_addr()) && (b in bidded)) ==> (((b in bidded) ? bidded[b] : 0) > 0)))
+    ensures (forall b: Address:: (((b != maxBidder) && (b != beneficiary)) ==> (((b in refunded) ? refunded[b] : 0) == ((b in bidded) ? bidded[b] : 0))))
+    {
+      balance := balance1
+      beneficiary := beneficiary1
+      bidded := bidded1
+      bidding_time := bidding_time1
+      currentBid := currentBid1
+      currentBidder := currentBidder1
+      maxBid := maxBid1
+      maxBidder := maxBidder1
+      oldmaxBid := oldmaxBid1
+      oldmaxBidder := oldmaxBidder1
+      refunded := refunded1
+      tmr := tmr1
+      winningBid := winningBid1
+      
+      winningBid := 0
+      tmr := init_timer()
+      refunded := Map()
+      oldmaxBidder := null_addr()
+      oldmaxBid := 0
+      maxBidder := null_addr()
+      maxBid := init_coin()
+      currentBidder := null_addr()
+      currentBid := 0
+      bidded := Map()
+      balance := 0
+      
+      assume chain_length_inc > 0
+      tmr := timer_dec(tmr, chain_length_inc)
+      
+    }
+    
+    method OnlyRefundBidders_inv_transition_number_0_from_StartAuction_to_AuctionOpen (a1: Address, balance1: Int, beneficiary1: Address, bidded1: Map[Address,Int], bidding_time1: Int, currentBid1: Int, currentBidder1: Address, maxBid1: Coin, maxBidder1: Address, oldmaxBid1: Int, oldmaxBidder1: Address, refunded1: Map[Address,Int], tmr1: Timer, winningBid1: Int, chain_length_inc: Int) returns (a: Address, balance: Int, beneficiary: Address, bidded: Map[Address,Int], bidding_time: Int, currentBid: Int, currentBidder: Address, maxBid: Coin, maxBidder: Address, oldmaxBid: Int, oldmaxBidder: Address, refunded: Map[Address,Int], tmr: Timer, winningBid: Int) 
+    requires ((((((cvalue(maxBid1) == 0) && (maxBidder1 == null_addr())) && (currentBid1 == 0)) && (currentBidder1 == null_addr())) && (balance1 == 0)) && (((beneficiary1 in refunded1) ? refunded1[beneficiary1] : 0) == 0))
+    requires ((maxBidder1 != beneficiary1) && (currentBidder1 != beneficiary1))
+    requires ((a1 == owner()) || false)
+    requires ((((beneficiary1 in refunded1) ? refunded1[beneficiary1] : 0) > 0) ==> ((((maxBidder1 in refunded1) ? refunded1[maxBidder1] : 0) + winningBid1) == ((maxBidder1 in bidded1) ? bidded1[maxBidder1] : 0)))
+    requires ((((maxBidder1 in bidded1) ? bidded1[maxBidder1] : 0) == 0) ==> (((maxBidder1 in refunded1) ? refunded1[maxBidder1] : 0) == 0))
+    requires ((((beneficiary1 in refunded1) ? refunded1[beneficiary1] : 0) == 0) ==> ((((maxBidder1 in refunded1) ? refunded1[maxBidder1] : 0) + cvalue(maxBid1)) == ((maxBidder1 in bidded1) ? bidded1[maxBidder1] : 0)))
+    requires ((currentBidder1 != null_addr()) ==> (((currentBidder1 in bidded1) ? bidded1[currentBidder1] : 0) > 0))
+    requires (a1 != null_addr())
+    requires (beneficiary1 != null_addr())
+    requires (forall b: Address:: (((b != null_addr()) && (b in bidded1)) ==> (((b in bidded1) ? bidded1[b] : 0) > 0)))
+    requires (forall b: Address:: (((b != maxBidder1) && (b != beneficiary1)) ==> (((b in refunded1) ? refunded1[b] : 0) == ((b in bidded1) ? bidded1[b] : 0))))
+    ensures ((maxBidder != beneficiary) && (currentBidder != beneficiary))
+    ensures ((((beneficiary in refunded) ? refunded[beneficiary] : 0) > 0) ==> ((((maxBidder in refunded) ? refunded[maxBidder] : 0) + winningBid) == ((maxBidder in bidded) ? bidded[maxBidder] : 0)))
+    ensures ((((maxBidder in bidded) ? bidded[maxBidder] : 0) == 0) ==> (((maxBidder in refunded) ? refunded[maxBidder] : 0) == 0))
+    ensures ((((beneficiary in refunded) ? refunded[beneficiary] : 0) == 0) ==> ((((maxBidder in refunded) ? refunded[maxBidder] : 0) + cvalue(maxBid)) == ((maxBidder in bidded) ? bidded[maxBidder] : 0)))
+    ensures ((currentBidder != null_addr()) ==> (((currentBidder in bidded) ? bidded[currentBidder] : 0) > 0))
+    ensures (((beneficiary in refunded) ? refunded[beneficiary] : 0) == 0)
+    ensures (beneficiary != null_addr())
+    ensures (forall b: Address:: (((b != null_addr()) && (b in bidded)) ==> (((b in bidded) ? bidded[b] : 0) > 0)))
+    ensures (forall b: Address:: (((b != maxBidder) && (b != beneficiary)) ==> (((b in refunded) ? refunded[b] : 0) == ((b in bidded) ? bidded[b] : 0))))
+    {
+      a := a1
+      balance := balance1
+      beneficiary := beneficiary1
+      bidded := bidded1
+      bidding_time := bidding_time1
+      currentBid := currentBid1
+      currentBidder := currentBidder1
+      maxBid := maxBid1
+      maxBidder := maxBidder1
+      oldmaxBid := oldmaxBid1
+      oldmaxBidder := oldmaxBidder1
+      refunded := refunded1
+      tmr := tmr1
+      winningBid := winningBid1
+      
+      
+      tmr := timer_set(tmr, bidding_time)
+      assume chain_length_inc > 0
+      tmr := timer_dec(tmr, chain_length_inc)
+      
+    }
+    
+    method OnlyRefundBidders_inv_transition_number_0_from_AuctionOpen_to_AuctionClosed (balance1: Int, beneficiary1: Address, bidded1: Map[Address,Int], bidding_time1: Int, currentBid1: Int, currentBidder1: Address, maxBid1: Coin, maxBidder1: Address, oldmaxBid1: Int, oldmaxBidder1: Address, refunded1: Map[Address,Int], tmr1: Timer, winningBid1: Int, chain_length_inc: Int) returns (balance: Int, beneficiary: Address, bidded: Map[Address,Int], bidding_time: Int, currentBid: Int, currentBidder: Address, maxBid: Coin, maxBidder: Address, oldmaxBid: Int, oldmaxBidder: Address, refunded: Map[Address,Int], tmr: Timer, winningBid: Int) 
+    requires ((maxBidder1 != beneficiary1) && (currentBidder1 != beneficiary1))
+    requires ((((beneficiary1 in refunded1) ? refunded1[beneficiary1] : 0) > 0) ==> ((((maxBidder1 in refunded1) ? refunded1[maxBidder1] : 0) + winningBid1) == ((maxBidder1 in bidded1) ? bidded1[maxBidder1] : 0)))
+    requires ((((maxBidder1 in bidded1) ? bidded1[maxBidder1] : 0) == 0) ==> (((maxBidder1 in refunded1) ? refunded1[maxBidder1] : 0) == 0))
+    requires ((((beneficiary1 in refunded1) ? refunded1[beneficiary1] : 0) == 0) ==> ((((maxBidder1 in refunded1) ? refunded1[maxBidder1] : 0) + cvalue(maxBid1)) == ((maxBidder1 in bidded1) ? bidded1[maxBidder1] : 0)))
+    requires ((currentBidder1 != null_addr()) ==> (((currentBidder1 in bidded1) ? bidded1[currentBidder1] : 0) > 0))
+    requires (((beneficiary1 in refunded1) ? refunded1[beneficiary1] : 0) == 0)
+    requires (beneficiary1 != null_addr())
+    requires fired(tmr1)
+    requires (forall b: Address:: (((b != null_addr()) && (b in bidded1)) ==> (((b in bidded1) ? bidded1[b] : 0) > 0)))
+    requires (forall b: Address:: (((b != maxBidder1) && (b != beneficiary1)) ==> (((b in refunded1) ? refunded1[b] : 0) == ((b in bidded1) ? bidded1[b] : 0))))
+    ensures ((maxBidder != beneficiary) && (currentBidder != beneficiary))
+    ensures ((((beneficiary in refunded) ? refunded[beneficiary] : 0) > 0) ==> ((((maxBidder in refunded) ? refunded[maxBidder] : 0) + winningBid) == ((maxBidder in bidded) ? bidded[maxBidder] : 0)))
+    ensures ((((maxBidder in bidded) ? bidded[maxBidder] : 0) == 0) ==> (((maxBidder in refunded) ? refunded[maxBidder] : 0) == 0))
+    ensures ((((beneficiary in refunded) ? refunded[beneficiary] : 0) == 0) ==> ((((maxBidder in refunded) ? refunded[maxBidder] : 0) + cvalue(maxBid)) == ((maxBidder in bidded) ? bidded[maxBidder] : 0)))
+    ensures ((currentBidder != null_addr()) ==> (((currentBidder in bidded) ? bidded[currentBidder] : 0) > 0))
+    ensures (((beneficiary in refunded) ? refunded[beneficiary] : 0) == winningBid)
+    ensures (beneficiary != null_addr())
+    ensures (forall b: Address:: (((b != null_addr()) && (b in bidded)) ==> (((b in bidded) ? bidded[b] : 0) > 0)))
+    ensures (forall b: Address:: (((b != maxBidder) && (b != beneficiary)) ==> (((b in refunded) ? refunded[b] : 0) == ((b in bidded) ? bidded[b] : 0))))
+    {
+      balance := balance1
+      beneficiary := beneficiary1
+      bidded := bidded1
+      bidding_time := bidding_time1
+      currentBid := currentBid1
+      currentBidder := currentBidder1
+      maxBid := maxBid1
+      maxBidder := maxBidder1
+      oldmaxBid := oldmaxBid1
+      oldmaxBidder := oldmaxBidder1
+      refunded := refunded1
+      tmr := tmr1
+      winningBid := winningBid1
+      
+      
+      refunded := refunded[beneficiary := (((beneficiary in refunded) ? refunded[beneficiary] : 0) + cvalue(maxBid))]
+      winningBid := cvalue(maxBid)
+      balance := (balance - cvalue(maxBid))
+      // send_winner(maxBid, maxBidder, beneficiary)
+      
+      maxBid := init_coin()
+      assume chain_length_inc > 0
+      tmr := timer_dec(tmr, chain_length_inc)
+      
+    }
+    
+    method OnlyRefundBidders_inv_transition_number_1_from_AuctionOpen_to_AuctionOpen (a1: Address, balance1: Int, beneficiary1: Address, bidded1: Map[Address,Int], bidding_time1: Int, c1: Coin, currentBid1: Int, currentBidder1: Address, maxBid1: Coin, maxBidder1: Address, oldmaxBid1: Int, oldmaxBidder1: Address, refunded1: Map[Address,Int], tmr1: Timer, winningBid1: Int, chain_length_inc: Int) returns (a: Address, balance: Int, beneficiary: Address, bidded: Map[Address,Int], bidding_time: Int, c: Coin, currentBid: Int, currentBidder: Address, maxBid: Coin, maxBidder: Address, oldmaxBid: Int, oldmaxBidder: Address, refunded: Map[Address,Int], tmr: Timer, winningBid: Int) 
+    requires ((a1 != beneficiary1) && true)
+    requires ((maxBidder1 != beneficiary1) && (currentBidder1 != beneficiary1))
+    requires (active(tmr1) && (cvalue(c1) > cvalue(maxBid1)))
+    requires ((((beneficiary1 in refunded1) ? refunded1[beneficiary1] : 0) > 0) ==> ((((maxBidder1 in refunded1) ? refunded1[maxBidder1] : 0) + winningBid1) == ((maxBidder1 in bidded1) ? bidded1[maxBidder1] : 0)))
+    requires ((((maxBidder1 in bidded1) ? bidded1[maxBidder1] : 0) == 0) ==> (((maxBidder1 in refunded1) ? refunded1[maxBidder1] : 0) == 0))
+    requires ((((beneficiary1 in refunded1) ? refunded1[beneficiary1] : 0) == 0) ==> ((((maxBidder1 in refunded1) ? refunded1[maxBidder1] : 0) + cvalue(maxBid1)) == ((maxBidder1 in bidded1) ? bidded1[maxBidder1] : 0)))
+    requires ((currentBidder1 != null_addr()) ==> (((currentBidder1 in bidded1) ? bidded1[currentBidder1] : 0) > 0))
+    requires (((beneficiary1 in refunded1) ? refunded1[beneficiary1] : 0) == 0)
+    requires (a1 != null_addr())
+    requires (beneficiary1 != null_addr())
+    requires (forall b: Address:: (((b != null_addr()) && (b in bidded1)) ==> (((b in bidded1) ? bidded1[b] : 0) > 0)))
+    requires (forall b: Address:: (((b != maxBidder1) && (b != beneficiary1)) ==> (((b in refunded1) ? refunded1[b] : 0) == ((b in bidded1) ? bidded1[b] : 0))))
+    ensures ((maxBidder != beneficiary) && (currentBidder != beneficiary))
+    ensures ((((beneficiary in refunded) ? refunded[beneficiary] : 0) > 0) ==> ((((maxBidder in refunded) ? refunded[maxBidder] : 0) + winningBid) == ((maxBidder in bidded) ? bidded[maxBidder] : 0)))
+    ensures ((((maxBidder in bidded) ? bidded[maxBidder] : 0) == 0) ==> (((maxBidder in refunded) ? refunded[maxBidder] : 0) == 0))
+    ensures ((((beneficiary in refunded) ? refunded[beneficiary] : 0) == 0) ==> ((((maxBidder in refunded) ? refunded[maxBidder] : 0) + cvalue(maxBid)) == ((maxBidder in bidded) ? bidded[maxBidder] : 0)))
+    ensures ((currentBidder != null_addr()) ==> (((currentBidder in bidded) ? bidded[currentBidder] : 0) > 0))
+    ensures (((beneficiary in refunded) ? refunded[beneficiary] : 0) == 0)
+    ensures (beneficiary != null_addr())
+    ensures (forall b: Address:: (((b != null_addr()) && (b in bidded)) ==> (((b in bidded) ? bidded[b] : 0) > 0)))
+    ensures (forall b: Address:: (((b != maxBidder) && (b != beneficiary)) ==> (((b in refunded) ? refunded[b] : 0) == ((b in bidded) ? bidded[b] : 0))))
+    {
+      a := a1
+      balance := balance1
+      beneficiary := beneficiary1
+      bidded := bidded1
+      bidding_time := bidding_time1
+      c := c1
+      currentBid := currentBid1
+      currentBidder := currentBidder1
+      maxBid := maxBid1
+      maxBidder := maxBidder1
+      oldmaxBid := oldmaxBid1
+      oldmaxBidder := oldmaxBidder1
+      refunded := refunded1
+      tmr := tmr1
+      winningBid := winningBid1
+      
+      
+      bidded := bidded[a := (((a in bidded) ? bidded[a] : 0) + cvalue(c))]
+      balance := (balance + cvalue(c))
+      currentBid := cvalue(c)
+      currentBidder := a
+      oldmaxBid := cvalue(maxBid)
+      oldmaxBidder := maxBidder
+      refunded := refunded[maxBidder := (((maxBidder in refunded) ? refunded[maxBidder] : 0) + cvalue(maxBid))]
+      balance := (balance - cvalue(maxBid))
+      // send_bid_lost(maxBid, maxBidder)
+      
+      maxBid := init_coin()
+      maxBidder := a
+      
+      
+      c, maxBid := cmove_all(c, maxBid)
+      
+      
+      assume chain_length_inc > 0
+      tmr := timer_dec(tmr, chain_length_inc)
+      
+    }
+    

@@ -1,0 +1,12 @@
+invariance SafeRemotePurchase {
+    always seller != Address.none <==> (value > 0 && Coin.value(seller_deposit) > 0)
+    always buyer == Address.none <==> (buyer_deposit == Coin.none && payment == Coin.none)
+
+    always Coin.value(seller_deposit) == 0 || Coin.value(seller_deposit) == 2 * value
+    always Coin.value(buyer_deposit) == 0 || Coin.value(buyer_deposit) == value
+    
+    @PostItem buyer == Address.none && seller_deposit == Coin.none
+    @ItemPosted buyer == Address.none && seller != Address.none
+    @ShipItem buyer != Address.none && seller != Address.none && Coin.value(payment) == value
+    @ReceivedItem buyer != Address.none && seller != Address.none && Coin.value(payment) == value
+}
