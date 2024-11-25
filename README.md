@@ -1,5 +1,5 @@
 ## Guide to repository
-This repository contains examples of smart contracts written in Asp, a language that eases construction of trustworthy smart contracts. The repository accompanies the paper "Constructing Trustworthy Smart Contracts" submitted to VMCAI 2025.
+This repository contains examples of smart contracts written in Asp, a language that eases construction of trustworthy smart contracts. The repository accompanies the paper "Constructing Trustworthy Smart Contracts" that will appear in VMCAI 2025. (Extended version available [here](https://arxiv.org/abs/2411.14563).)
 
 Each folder contains an Asp contract, along with any proof files for the contract. Asp contracts end in .asp, while proof files end in .proof. Proof verification consists of compiling the contract and proof to Viper. 
 The compiled Viper files are attached (ending in .vpr), and can be verified independently with Viper. These files rely on domains encoded in Viper to support Asp's abstract types. For verification, the file ADT_encoding.vpr must be found in the same directory as the file under verification.
